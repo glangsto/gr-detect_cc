@@ -129,7 +129,7 @@ namespace gr {
       int mode = d_nt;
       int vlen = d_vec_length;
       gr_complex rp = 0;
-      double mag2 = 0;
+      double mag2 = 0, dmjd = 54321.5;
       
       // fill the circular buffer
       for(unsigned int j=0; j < vlen; j++)
@@ -157,6 +157,23 @@ namespace gr {
 		  imax2 = inext2;
 		  peak = sqrt(circular2[inext2]);
 		  printf( "N-sigma Peak found: %7.1f\n", peak/rms);
+		  // add tags to event
+		  add_item_tag(0, // Port number
+			       nitems_written(0) + 0, // Offset
+			       pmt::mp("PEAK"), // Key
+			       pmt::from_double(peak) // Value
+			       );
+		  add_item_tag(0, // Port number
+			       nitems_written(0) + 0, // Offset
+			       pmt::mp("RMS"), // Key
+			       pmt::from_double(rms) // Value
+			       );
+		  add_item_tag(0, // Port number
+			       nitems_written(0) + 0, // Offset
+			       pmt::mp("MJD"), // Key
+			       pmt::from_double(dmjd) // Value
+			       );
+
 		  update_buffer();
 		}
 	    } // end if buffere full
