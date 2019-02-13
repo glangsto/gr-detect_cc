@@ -24,6 +24,7 @@
 #include <radio_astro/detect.h>
 
 #define MAX_VLEN 16384
+#define TIME_UTC     0
 #define MAX_BUFF (2*MAX_VLEN)
 
 namespace gr {
@@ -75,8 +76,11 @@ namespace gr {
            gr_vector_int &ninput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
-    };
 
+      long DateToMjd (long Year, long Month, long Day);
+      
+      double get_mjd();
+    }; 
   } // namespace radio_astro
 } // namespace gr
 

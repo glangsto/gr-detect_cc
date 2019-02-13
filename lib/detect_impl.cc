@@ -2,7 +2,7 @@
 /* 
  * Copyright 2019 - Quiet Skies LLC -- Glen Langston - glen.i.langston@gmail.com
  * 
- * This is free software; you can redistribute it and/or modify
+ * This is free software;  you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3, or (at your option)
  * any later version.
@@ -23,8 +23,34 @@
 #endif
 
 #include <gnuradio/io_signature.h>
+#include <stdio.h>
+#include <time.h> 
 #include "detect_impl.h"
 #include <iostream>
+#include <chrono>
+
+/*
+ * Convert Modified Julian Day to calendar date.
+ * - Assumes Gregorian calendar.
+ * - Adapted from Fliegel/van Flandern ACM 11/#10 p 657 Oct 1968.
+ */
+
+void
+MjdToDate (long Mjd, long *Year, long *Month, long *Day)
+{
+  long J, C, Y, M;
+
+  J = Mjd + 2400001 + 68569;
+  C = 4 * J / 146097;
+  J = J - (146097 * C + 3) / 4;
+  Y = 4000 * (J + 1) / 1461001;
+  J = J - 1461 * Y / 4 + 31;
+  M = 80 * J / 2447;
+  *Day = J - 2447 * M / 80;
+  J = M / 11;
+  *Month = M + 2 - (12 * J);
+  *Year = 100 * (C - 49) + Y + J;
+}  // end of MjdToDate
 
 namespace gr {
   namespace radio_astro {
@@ -57,6 +83,44 @@ namespace gr {
     detect_impl::~detect_impl()
     {
     }
+
+    long
+    detect_impl::DateToMjd (long Year, long Month, long Day)
+    {
+      return
+        367 * Year
+	- 7 * (Year + (Month + 9) / 12) / 4
+	- 3 * ((Year + (Month - 9) / 7) / 100 + 1) / 4
+        + 275 * Month / 9
+        + Day
+        + 1721028
+	- 2400000;
+    } // end of DateToMjd
+
+    double 
+    detect_impl::get_mjd()
+    {
+      double gmt = 0, mjd = 0, daypart = 0.;
+      struct timespec ts;
+      int r = clock_gettime(CLOCK_REALTIME, &ts);
+      char buff[100];
+      time_t now = time(NULL);
+      struct tm *ptm = localtime(&now);
+
+      int year = ptm->tm_year + 1900;
+      int month = ptm->tm_mon + 1;
+      int day = ptm->tm_mday;
+
+      //      gmt = gmtime(&ts.tv_sec);
+      strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
+      printf("Current time: %s.%09ld UTC\n", buff, ts.tv_nsec);
+      printf("GMT: %15.9f GMT\n", gmt);
+      
+      mjd = DateToMjd( year, month, day);
+      mjd += ts.tv_sec/86400.;
+
+      return mjd;
+    } // end of get_mjd()
 
     void
     detect_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
@@ -168,6 +232,7 @@ namespace gr {
 			       pmt::mp("RMS"), // Key
 			       pmt::from_double(rms) // Value
 			       );
+		  dmjd = get_mjd();
 		  add_item_tag(0, // Port number
 			       nitems_written(0) + 0, // Offset
 			       pmt::mp("MJD"), // Key
