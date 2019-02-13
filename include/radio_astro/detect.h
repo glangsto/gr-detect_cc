@@ -64,8 +64,11 @@ namespace gr {
        */
       static sptr make(int vec_length, float dms, float f_obs, float bw, float t_int, int nt);
 
-      virtual void set_dms(float dms) = 0;
-      //      virtual void set_bw(float dms) = 0;
+      virtual void set_dms(float dms) = 0;  // This is the nsigma parameter
+
+      virtual void set_mode(int mode) = 0;  // Either send the data stream (mode == 0) or last event
+
+      virtual void set_bw(float bw) = 0;
       //      void set_dms(float dms) = 0;
       
     };

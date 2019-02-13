@@ -100,24 +100,25 @@ namespace gr {
     double 
     detect_impl::get_mjd()
     {
-      double gmt = 0, mjd = 0, daypart = 0.;
+      double mjd = 0, seconds = 0;
       struct timespec ts;
       int r = clock_gettime(CLOCK_REALTIME, &ts);
       char buff[100];
       time_t now = time(NULL);
-      struct tm *ptm = localtime(&now);
+      struct tm *ptm = gmtime(&now);
 
       int year = ptm->tm_year + 1900;
       int month = ptm->tm_mon + 1;
       int day = ptm->tm_mday;
 
-      //      gmt = gmtime(&ts.tv_sec);
       strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
       printf("Current time: %s.%09ld UTC\n", buff, ts.tv_nsec);
-      printf("GMT: %15.9f GMT\n", gmt);
       
       mjd = DateToMjd( year, month, day);
-      mjd += ts.tv_sec/86400.;
+      seconds =  ptm->tm_sec + (60.*ptm->tm_min) + (3600.*ptm->tm_hour);
+      seconds += seconds + (1.e-9*ts.tv_nsec);
+      mjd += (seconds/86400.);
+      //      printf("MJD: %15.9f + %15.9fs\n", mjd, seconds);
 
       return mjd;
     } // end of get_mjd()
@@ -138,6 +139,27 @@ namespace gr {
       printf("Input N Sigma: %7.1f\n", nsigma);
       d_dms = dms;
     }
+      
+    void 
+    detect_impl::set_bw ( float bw)
+    {
+      d_bw = bw;
+      printf("Input Bandwidth: %7.1f (MHz)\n", bw);
+    }
+      
+    void 
+    detect_impl::set_mode ( int mode)
+    {
+      event_mode = mode;
+      if (event_mode == 0){
+	printf("Input Mode: Monitor\n");
+      }
+      else {
+	printf("Input Mode: Detect\n");
+      }
+	
+      d_nt = mode;
+    } // end of set_mode()
       
     int
     detect_impl::general_work (int noutput_items,
@@ -190,10 +212,9 @@ namespace gr {
     {
       //outbuf = (float *) //create fresh one if necessary
       float n_sigma = d_dms; // translate variables 
-      int mode = d_nt;
       int vlen = d_vec_length;
       gr_complex rp = 0;
-      double mag2 = 0, dmjd = 54321.5;
+      double mag2 = 0, dmjd = 0;
       
       // fill the circular buffer
       for(unsigned int j=0; j < vlen; j++)
@@ -220,21 +241,23 @@ namespace gr {
 		{
 		  imax2 = inext2;
 		  peak = sqrt(circular2[inext2]);
-		  printf( "N-sigma Peak found: %7.1f\n", peak/rms);
+		  // printf( "N-sigma Peak found: %7.1f\n", peak/rms);
 		  // add tags to event
 		  add_item_tag(0, // Port number
-			       nitems_written(0) + 0, // Offset
+			       nitems_written(0) + 1, // Offset
 			       pmt::mp("PEAK"), // Key
 			       pmt::from_double(peak) // Value
 			       );
 		  add_item_tag(0, // Port number
-			       nitems_written(0) + 0, // Offset
+			       nitems_written(0) + 1, // Offset
 			       pmt::mp("RMS"), // Key
 			       pmt::from_double(rms) // Value
 			       );
 		  dmjd = get_mjd();
+		  printf("Event MJD: %15.6f; Peak=%8.4f+/-%6.4f\n", dmjd, peak, rms);
+
 		  add_item_tag(0, // Port number
-			       nitems_written(0) + 0, // Offset
+			       nitems_written(0) + 1, // Offset
 			       pmt::mp("MJD"), // Key
 			       pmt::from_double(dmjd) // Value
 			       );

@@ -44,6 +44,7 @@ namespace gr {
       double peak = 0;        // peak, rms and date/time of detected event
       double rms = 0;         // rms of values in circular buffer
       double mjd = 0;         // modified Julian Date of event
+      int event_mode = 0;
       gr_complex circular[MAX_BUFF];   // circular buffer for input samples
       float circular2[MAX_BUFF];   // circular buffer for input samples**2
       long inext = 0;         // next place for a sample in buffer
@@ -65,8 +66,14 @@ namespace gr {
       // Where all the action really happens
       void forecast (int noutput_items, gr_vector_int &ninput_items_required);
 
-      //      virtual void set_dms( float dms);
+      //      set nsigma for a detection;
       void set_dms( float dms);
+
+      //      set the bandwidth, in MHz
+      void set_bw( float bw);
+      
+      //      virtual void set_dms( float dms);
+      void set_mode( int mode);
       
       int update_buffer();
 
