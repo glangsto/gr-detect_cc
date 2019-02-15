@@ -66,7 +66,9 @@ namespace gr {
 
       virtual void set_dms(float dms) = 0;  // This is the nsigma parameter
 
-      virtual void set_mode(int mode) = 0;  // Either send the data stream (mode == 0) or last event
+      virtual void set_vlen(int vec_length) = 0;  // This is the nsigma parameter
+
+      virtual void set_mode(int nt) = 0;  // Either send the data stream (mode == 0) or last event
 
       virtual void set_bw(float bw) = 0;
       //      void set_dms(float dms) = 0;

@@ -23,9 +23,33 @@
 
 #include <radio_astro/detect.h>
 
-#define MAX_VLEN 16384
-#define TIME_UTC     0
+#define MAX_VLEN 4096
+#define TIME_UTC    0
 #define MAX_BUFF (2*MAX_VLEN)
+
+// constants for calculating Modified Julian Date
+#define DaysPer400Years   (365L*400 + 97)
+#define DaysPer100Years   (365L*100 + 24)
+#define DaysPer4Years     (365*4    +  1)
+#define DaysPer1Year      365
+#define MonthsPerYear     12
+#define MonthsPer400Years (12*400)
+#define MonthMarch        3
+#define mjdOffset         (678881  /* Epoch Nov 17, 1858 */)
+
+static const short DaysMarch1ToBeginingOfMonth[12] = { 
+  0, 
+  31, 
+  31 + 30, 
+  31 + 30 + 31, 
+  31 + 30 + 31 + 30, 
+  31 + 30 + 31 + 30 + 31, 
+  31 + 30 + 31 + 30 + 31 + 31,
+  31 + 30 + 31 + 30 + 31 + 31 + 30,
+  31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,
+  31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 
+  31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31,
+  31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31 + 31 };
 
 namespace gr {
   namespace radio_astro {
@@ -44,7 +68,6 @@ namespace gr {
       double peak = 0;        // peak, rms and date/time of detected event
       double rms = 0;         // rms of values in circular buffer
       double mjd = 0;         // modified Julian Date of event
-      int event_mode = 0;
       gr_complex circular[MAX_BUFF];   // circular buffer for input samples
       float circular2[MAX_BUFF];   // circular buffer for input samples**2
       long inext = 0;         // next place for a sample in buffer
@@ -71,9 +94,14 @@ namespace gr {
 
       //      set the bandwidth, in MHz
       void set_bw( float bw);
+
+      void set_freq( float f_obs);
+
+      void set_dt( float t_int);
       
-      //      virtual void set_dms( float dms);
-      void set_mode( int mode);
+      void set_mode( int nt);
+
+      void set_vlen( int vec_length);
       
       int update_buffer();
 
@@ -84,8 +112,12 @@ namespace gr {
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
 
-      long DateToMjd (long Year, long Month, long Day);
-      
+      /* function for Modified Julian Date (MJD) */
+      int ymd_to_mjd(int year, int month, int day);      
+
+      /* more accurate function for Modified Julian Date (MJD) */
+      int ymd_to_mjd_x(int year, int month, int day);      
+
       double get_mjd();
     }; 
   } // namespace radio_astro

@@ -29,29 +29,6 @@
 #include <iostream>
 #include <chrono>
 
-/*
- * Convert Modified Julian Day to calendar date.
- * - Assumes Gregorian calendar.
- * - Adapted from Fliegel/van Flandern ACM 11/#10 p 657 Oct 1968.
- */
-
-void
-MjdToDate (long Mjd, long *Year, long *Month, long *Day)
-{
-  long J, C, Y, M;
-
-  J = Mjd + 2400001 + 68569;
-  C = 4 * J / 146097;
-  J = J - (146097 * C + 3) / 4;
-  Y = 4000 * (J + 1) / 1461001;
-  J = J - 1461 * Y / 4 + 31;
-  M = 80 * J / 2447;
-  *Day = J - 2447 * M / 80;
-  J = M / 11;
-  *Month = M + 2 - (12 * J);
-  *Year = 100 * (C - 49) + Y + J;
-}  // end of MjdToDate
-
 namespace gr {
   namespace radio_astro {
 
@@ -84,18 +61,44 @@ namespace gr {
     {
     }
 
-    long
-    detect_impl::DateToMjd (long Year, long Month, long Day)
+    int
+    detect_impl::ymd_to_mjd(int year, int month, int day) 
+    { double MJD = 0;
+      long I = year, J = month, K = day, JD = 0;
+
+      // Julian date, JD, is calculated only with integer math for 1800 to 2099
+      JD = (K-32075);
+      JD += 1461*(I+4800+(J-14)/12)/4+367*(J-2-(J-14)/12*12)/12;
+      JD -= 3*((I+4900+(J-14)/12)/100)/4;
+      MJD = JD - 2400000;
+      // printf("Date %5d/%2d/%2d -> %9.1f\n",year, month, day, MJD);
+      return( int(MJD));
+    } //end of ymd_to_mjd()
+
+    int
+    detect_impl::ymd_to_mjd_x(int year, int month, int day) 
     {
-      return
-        367 * Year
-	- 7 * (Year + (Month + 9) / 12) / 4
-	- 3 * ((Year + (Month - 9) / 7) / 100 + 1) / 4
-        + 275 * Month / 9
-        + Day
-        + 1721028
-	- 2400000;
-    } // end of DateToMjd
+      year += month / MonthsPerYear;
+      month %= MonthsPerYear;
+      // Adjust for month/year to Mar... Feb
+      while (month < MonthMarch) {
+	month += MonthsPerYear; // Months per year
+	year--;
+      }
+      int d = (year / 400) * DaysPer400Years;
+      int y400 = (int) (year % 400);
+      d += (y400 / 100) * DaysPer100Years;
+      int y100 = y400 % 100;
+      d += (y100 / 4) * DaysPer4Years;
+      int y4 = y100 % 4;
+      d += y4 * DaysPer1Year;
+      d += DaysMarch1ToBeginingOfMonth[month - MonthMarch];
+      d += day;
+      // November 17, 1858 == MJD 0
+      d--;
+      d -= mjdOffset;
+      return d;
+    } /* end of int ymd_to_mjd_x() */
 
     double 
     detect_impl::get_mjd()
@@ -110,13 +113,15 @@ namespace gr {
       int year = ptm->tm_year + 1900;
       int month = ptm->tm_mon + 1;
       int day = ptm->tm_mday;
+      // printf("Current date: %5d %3d %3d\n", year, month, day);
+      mjd = ymd_to_mjd_x( year, month, day);
 
       strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
-      printf("Current time: %s.%09ld UTC\n", buff, ts.tv_nsec);
+      // printf("Current time: %s.%09ld UTC\n", buff, ts.tv_nsec);
       
-      mjd = DateToMjd( year, month, day);
       seconds =  ptm->tm_sec + (60.*ptm->tm_min) + (3600.*ptm->tm_hour);
-      seconds += seconds + (1.e-9*ts.tv_nsec);
+      //      seconds = seconds % 86400.;
+      seconds += (1.e-9*ts.tv_nsec);
       mjd += (seconds/86400.);
       //      printf("MJD: %15.9f + %15.9fs\n", mjd, seconds);
 
@@ -138,6 +143,14 @@ namespace gr {
       nsigma = dms;
       printf("Input N Sigma: %7.1f\n", nsigma);
       d_dms = dms;
+      printf("Input Mode   : %2d\n", d_nt);
+    }
+
+    void 
+    detect_impl::set_dt ( float dt)
+    {
+      d_t_int = dt;
+      printf("Input Sample Delay: %15.9f s\n", d_t_int);
     }
       
     void 
@@ -148,18 +161,40 @@ namespace gr {
     }
       
     void 
-    detect_impl::set_mode ( int mode)
+    detect_impl::set_freq ( float freq)
     {
-      event_mode = mode;
-      if (event_mode == 0){
+      d_f_obs = freq;
+      printf("Input Frequency: %7.1f (MHz)\n", d_f_obs);
+    }
+      
+    void 
+    detect_impl::set_mode ( int nt)
+    {
+      if (nt == 0){
 	printf("Input Mode: Monitor\n");
       }
       else {
 	printf("Input Mode: Detect\n");
       }
 	
-      d_nt = mode;
+      d_nt = nt;
+      printf("Mode: %5.1d\n", d_nt);
+
     } // end of set_mode()
+      
+    void 
+    detect_impl::set_vlen ( int vlen)
+    {
+      if (vlen < 32) 
+	{ vlen = 32;
+	    printf("Vector Length too short, using %5d\n", vlen);
+	}
+      else if (vlen > MAX_VLEN) 
+	{ vlen = MAX_VLEN;
+	    printf("Vector Length too large, using %5d\n", vlen);
+	}
+      d_vec_length = vlen;
+    } // end of set_vlen()
       
     int
     detect_impl::general_work (int noutput_items,
@@ -263,23 +298,32 @@ namespace gr {
 			       );
 
 		  update_buffer();
-		}
+		} // end if an event found
 	    } // end if buffere full
 	} // end for all samples
 	      
       if (! initialized) {
-	nsigma = d_dms;
 	for (int iii = 0; iii < vlen; iii++)
 	  { samples[iii] = input[iii];
 	  }
 	initialized = 1;     // no need to re-initialize the event
 	printf("Input N-Sigma: %7.1f\n", nsigma);
+	printf("Input Mode   : %2d\n", d_nt);
       }
 
-      // always output the last event
-      for (int iii = 0; iii < vlen; iii++)
-	{ output[iii] = samples[iii];
+      if (d_nt == 0) // if monitoring input, just output input 
+	{
+	  // always output the last event
+	  for (int iii = 0; iii < vlen; iii++)
+	    { output[iii] = input[iii];
+	    }
 	}
+      else {
+	// output the last event
+	for (int iii = 0; iii < vlen; iii++)
+	  { output[iii] = samples[iii];
+	  }
+      } // end else output event
 
       return 0;
     } // end of detect_impl::event()
