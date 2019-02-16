@@ -23,8 +23,11 @@
 
 #include <radio_astro/detect.h>
 
+#ifndef TIME_UTC                   // must define utc time flag
+#define TIME_UTC    1
+#endif
+
 #define MAX_VLEN 4096
-#define TIME_UTC    0
 #define MAX_BUFF (2*MAX_VLEN)
 
 // constants for calculating Modified Julian Date
@@ -59,12 +62,12 @@ namespace gr {
      private:
       // values computed in this block
       int d_vec_length;
-      float d_dms;
+      float d_dms = 4.0;
       float d_f_obs;
       float d_bw;
       float d_t_int;
-      int d_nt;
-      double nsigma = 0;
+      int d_nt = 1;
+      double nsigma = 4.0;
       double peak = 0;        // peak, rms and date/time of detected event
       double rms = 0;         // rms of values in circular buffer
       double mjd = 0;         // modified Julian Date of event
