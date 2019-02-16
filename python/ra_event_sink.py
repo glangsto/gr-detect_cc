@@ -95,11 +95,11 @@ class ra_event_sink(gr.sync_block):
             self.obs.datadir = self.obs.datadir + "/"
             print 'DataDir          : ', self.obs.datadir
         self.obs.nSpec = 0             # not working with spectra
-        self.obs.nChan = 0
+        self.obs.nChan = vlen
         self.obs.nTime = 1             # working with time series
         self.obs.nSamples = vlen
         vlen2 = int(vlen/2)
-        self.obs.refSample = vlen2 + 1 # event is in middle of time sequence
+        self.obs.refSample = vlen2     # event is in middle of time sequence
         self.obs.ydataA = np.zeros(vlen, dtype=np.complex64)
         self.obs.xdata = np.zeros(vlen)
         now = datetime.datetime.utcnow()
@@ -137,9 +137,9 @@ class ra_event_sink(gr.sync_block):
             print "Invalid Bandwidth: ", bandwidthMHz
             bandwidthMHz = 1.
         self.bandwidth = bandwidthMHz         # header units MHz
-        self.obs.bandwidth = bandwidthMHz*1.E6  # observation units Hz
-        print "Setting Bandwidth: %10.6f MHz" % (1.E-6*self.obs.bandwidth)
-        self.obs.dt = 1./np.fabs(self.obs.bandwidth)
+        self.obs.bandwidthHz = bandwidthMHz*1.E6  # observation units Hz
+        print "Setting Bandwidth: %10.6f MHz" % (1.E-6*self.obs.bandwidthHz)
+        self.obs.dt = 1./np.fabs(self.obs.bandwidthHz)
         t = -self.obs.dt * self.obs.refSample
         for iii in range(self.vlen):
             self.obs.xdata[iii] = t
@@ -153,7 +153,7 @@ class ra_event_sink(gr.sync_block):
         self.obs.read_spec_ast(self.noteName)    # read the parameters 
         self.obs.datadir = "../events/"          # writing events not spectra
         self.obs.nSpec = 0             # not working with spectra
-        self.obs.nChan = 0
+        self.obs.nChan = vlen
         self.obs.nTime = 1             # working with time series
         self.obs.refSample = vlen/2    # event is in middle of time sequence
         self.obs.nSamples = vlen
@@ -163,7 +163,7 @@ class ra_event_sink(gr.sync_block):
         self.eventutc = now
         self.obs.utc = now
         self.setupdir = "./"
-        self.set_sample_rate( self.bandwidth)
+        self.set_sample_rate( self.bandwidthMHz)
     
     def set_record(self, record):
         """ 
@@ -221,8 +221,8 @@ class ra_event_sink(gr.sync_block):
             # if new mjd 
             if self.eventmjd > self.lastmjd:
                 self.lastmjd = self.eventmjd
-                self.obs.samples = samples
-                self.obs.nSamples = len(samples)
+                self.obs.ydataA = samples.real
+                self.obs.ydataB = samples.imag
                 utc = jdutil.mjd_to_datetime( self.eventmjd)
                 self.obs.utc = utc
                 # create file name from event time
