@@ -79,7 +79,7 @@ class ra_event_log(gr.sync_block):
             print "Invalid Bandwidth: ", bandwidth
             return
         self.bandwidth = bandwidth
-        print "Setting Bandwidth: %10.0f Hz" % (self.bandwidth)
+        print "Setting Bandwidth: %10.6f MHz" % (self.bandwidth)
 
     def get_sample_rate(self):
         """
@@ -113,7 +113,7 @@ class ra_event_log(gr.sync_block):
             f.write(outline)
             outline = "# %s\n" % (self.note)
             f.write(outline)
-            outline = "# bandwidth = %15.6f\n" % (self.bandwidth)
+            outline = "# bandwidth = %15.6f MHz\n" % (self.bandwidth)
             f.write(outline)
             outline = "# vlen      = %6d\n" % (self.vlen)
             f.write(outline)

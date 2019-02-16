@@ -6,7 +6,7 @@
   <import>import radio_astro</import>
   <make>radio_astro.detect($vec_length, $dms, $f_obs, $bw, $t_int, $mode)</make>
   <callback>set_dms( $dms)</callback>
-  <callback>set_vec_length( $vec_length)</callback>
+  <callback>set_vlen( $vec_length)</callback>
   <callback>set_bw( $bw)</callback>
   <callback>set_f_obs( $f_obs)</callback>
   <callback>set_mode( $mode)</callback>

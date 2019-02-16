@@ -44,7 +44,7 @@ class ra_event_sink(gr.sync_block):
     Parameters are
     1) ConfigFileName
     2) Vector length in Channels
-    3) Bandwidth (Hz)
+    3) Bandwidth (MHz)
     4) Record Flag
     This block is intended to reduce the downstream CPU load.
     """
@@ -128,14 +128,18 @@ class ra_event_sink(gr.sync_block):
         ninput_items = noutput_items
         return ninput_items
 
-    def set_sample_rate(self, bandwidth):
-        bandwidth = np.float(bandwidth)
-        if bandwidth == 0:
-            print "Invalid Bandwidth: ", bandwidth
-            return
-        self.obs.bandwidthHz = bandwidth
-        print "Setting Bandwidth: %10.0f Hz" % (self.obs.bandwidthHz)
-        self.obs.dt = 1./np.fabs(self.obs.bandwidthHz)
+    def set_sample_rate(self, bandwidthMHz):
+        bandwidthMHz = np.float(bandwidthMHz)
+        if bandwidthMHz <= 0.0001:
+            print "Invalid Bandwidth: ", bandwidthMHz
+            bandwidthMHz = 1.
+        if bandwidthMHz >= 1000.:
+            print "Invalid Bandwidth: ", bandwidthMHz
+            bandwidthMHz = 1.
+        self.bandwidth = bandwidthMHz         # header units MHz
+        self.obs.bandwidth = bandwidthMHz*1.E6  # observation units Hz
+        print "Setting Bandwidth: %10.6f MHz" % (1.E-6*self.obs.bandwidth)
+        self.obs.dt = 1./np.fabs(self.obs.bandwidth)
         t = -self.obs.dt * self.obs.refSample
         for iii in range(self.vlen):
             self.obs.xdata[iii] = t

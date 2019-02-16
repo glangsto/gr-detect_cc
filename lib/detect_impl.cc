@@ -252,7 +252,7 @@ namespace gr {
 	{ i += MAX_BUFF;
 	  length = MAX_BUFF - i;
        	  printf("Two part - shift; Move 1: i=%ld, length=%ld\n", i, length);
-	  for (long j = 0; j ++; j < length)
+	  for (long j = 0; j < length; j++)
 	    { samples[j] = circular[i];
 	      i++;
 	    }
@@ -260,7 +260,7 @@ namespace gr {
 	  jstart = length;
 	  length = vlen - length;
        	  printf("Two part - shift; Move 2: i=%ld, length=%ld\n", i, length);
-	  for (long j = jstart; j ++; j < vlen)
+	  for (long j = jstart; j < vlen; j++)
 	    { samples[j] = circular[i];
 	      i++;
 	    }

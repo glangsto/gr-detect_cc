@@ -61,7 +61,7 @@ namespace gr {
     {
      private:
       // values computed in this block
-      int d_vec_length = 512;
+      int d_vec_length = 2048;
       float d_dms = 4.0;
       float d_f_obs = 1.;
       float d_bw = 1.;
