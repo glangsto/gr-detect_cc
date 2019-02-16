@@ -71,7 +71,7 @@ namespace gr {
 
       virtual void set_bw(float bw) = 0;
 
-      virtual void set_f_obs(float f_obs) = 0;
+      virtual void set_freq(float f_obs) = 0;
       
     };
 

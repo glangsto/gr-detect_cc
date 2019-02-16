@@ -22,7 +22,7 @@
     </param>
     <param>
       <key>description</key>
-      <value>Airspy Mini 1st try</value>
+      <value>Rtlsdr 1st try</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>NsfDetect60airspy</value>
+      <value>NsfDetect10rtlsdr</value>
     </param>
     <param>
       <key>max_nouts</key>
