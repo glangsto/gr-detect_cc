@@ -27,9 +27,9 @@
     <type>int</type>
   </param>
   <param>
-    <name>Sample Rate (Hz)</name>
+    <name>Sample Rate (MHz)</name>
     <key>sample_rate</key>
-    <value>1.E6</value>
+    <value>1.</value>
     <type>float</type>
   </param>
   <param>
