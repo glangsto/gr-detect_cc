@@ -52,7 +52,13 @@ namespace gr {
         d_bw(bw),
         d_t_int(t_int),
         d_nt(nt)
-    {}
+    { set_vlen( vec_length);  /* initialize all imput values */
+      set_mode( nt);
+      set_dms( dms);
+      set_bw( bw);
+      set_freq( f_obs);
+      set_dt( t_int);
+    }
 
     /*
      * Our virtual destructor.
@@ -143,7 +149,6 @@ namespace gr {
       nsigma = dms;
       printf("Input N Sigma: %7.1f\n", nsigma);
       d_dms = dms;
-      printf("Input Mode   : %2d\n", d_nt);
     }
 
     void 
@@ -156,8 +161,14 @@ namespace gr {
     void 
     detect_impl::set_bw ( float bw)
     {
+      if (bw < 0.01)
+	{printf("Input Bandwidth too small: %10.6f (MHz)\n", bw);
+	 bw = 1.0;
+	}
       d_bw = bw;
+      
       printf("Input Bandwidth: %7.1f (MHz)\n", bw);
+      bufferdelay = float(MAX_VLEN/2)*1.E-6/d_bw;
     }
       
     void 
@@ -178,13 +189,11 @@ namespace gr {
       }
 	
       d_nt = nt;
-      printf("Mode: %5.1d\n", d_nt);
-
     } // end of set_mode()
       
     void 
-    detect_impl::set_vlen ( int vlen)
-    {
+    detect_impl::set_vlen ( int invlen)
+    { vlen = invlen;
       if (vlen < 32) 
 	{ vlen = 32;
 	    printf("Vector Length too short, using %5d\n", vlen);
@@ -194,6 +203,13 @@ namespace gr {
 	    printf("Vector Length too large, using %5d\n", vlen);
 	}
       d_vec_length = vlen;
+      vlen2 = vlen/2;
+      
+      // vectors do not yet work;  circular = std::vector<gr_complex>(vlen);
+      // now must initialize indicies
+      inext = 0;
+      bufferfull = false;
+      inext2 = (MAX_BUFF/2) + 1;
     } // end of set_vlen()
       
     int
@@ -208,12 +224,6 @@ namespace gr {
       int success;
 
       success = event(in, out);
-      //      if (success == 0)
-      //	{
-      //	  std::cout << "Processed " << ninputs << " Vectors" << "\n";
-      //	}
-      //std::cout << out[0*d_dms+ 0] << " " << out[31*d_dms+49] <<"\n";
-
       // Tell runtime system how many input items we consumed on
       // each input stream.
       consume_each (noutput_items);
@@ -225,22 +235,59 @@ namespace gr {
 
     int
     detect_impl::update_buffer()
-    { long vlen = d_vec_length, vlen2 = d_vec_length/2, i = inext2;
+    { long i = inext2 - vlen2, length = vlen,
+	jstart = 0;
 
-      i -= vlen2;  // center peak in middle of output vector
+      // now must reset the buffer to wait for the next event
+      bufferfull = false;
 
-      // if event is well within the circular buffer 
-      if ((i > vlen2) && (i < MAX_BUFF - vlen2))
-	{ for (long j = 0; j < vlen; j++)
+      // if event is within the circular buffer 
+      if ((i >= 0) && ((i + length) < MAX_BUFF))
+	{ for (long j = 0; j < length; j++)
 	    { samples[j] = circular[i];
 	      i++;
 	    }
 	}
-
-      // now must reset the buffer to wait for the next event
-      bufferfull = 0;
-      return 0;
-    } // end of update_buffer()
+      else if (i < 0)
+	{ i += MAX_BUFF;
+	  length = MAX_BUFF - i;
+       	  printf("Two part - shift; Move 1: i=%ld, length=%ld\n", i, length);
+	  for (long j = 0; j ++; j < length)
+	    { samples[j] = circular[i];
+	      i++;
+	    }
+	  i = 0; 
+	  jstart = length;
+	  length = vlen - length;
+       	  printf("Two part - shift; Move 2: i=%ld, length=%ld\n", i, length);
+	  for (long j = jstart; j ++; j < vlen)
+	    { samples[j] = circular[i];
+	      i++;
+	    }
+	}
+      else
+	{  /* near end of circular buffer */
+	  length = MAX_BUFF - i;
+	  if (length > vlen)
+	    length = vlen;
+	  printf("Two part + shift; Move 1: i=%ld, length=%ld\n", i, length);  
+	  for (long j = 0; j < length; j++) 
+	    {
+	      samples[j] = circular[i];
+	      i++;
+	    }
+	  i = 0;
+	  jstart = length;
+	  length = vlen - length;
+	  printf("Two part + shift; Move 2: i=%ld, shift=%ld\n", i, length);
+	  for (long j = jstart; j < vlen; j++)
+	    {
+	      samples[j] = circular[i];
+	      i++;
+	    }
+	} // else near end of circular buffer
+    return 0;
+  } // end of update_buffer()
     
     int
     detect_impl::event(const gr_complex *input, gr_complex *output)
@@ -263,7 +310,7 @@ namespace gr {
 	    { rms2 = sum2*oneovern;
 	      rms = sqrt(rms2);
 	      inext = 0;
-	      bufferfull = 1;    // flag buffer is now full
+	      bufferfull = true; // flag buffer is now full
 	      nsigma_rms = nsigma*nsigma*rms2;
 	      sum2 = 0;          // restart rms sum
 	    }
@@ -307,8 +354,6 @@ namespace gr {
 	  { samples[iii] = input[iii];
 	  }
 	initialized = 1;     // no need to re-initialize the event
-	printf("Input N-Sigma: %7.1f\n", nsigma);
-	printf("Input Mode   : %2d\n", d_nt);
       }
 
       if (d_nt == 0) // if monitoring input, just output input 

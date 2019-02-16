@@ -58,7 +58,7 @@ class ra_event_log(gr.sync_block):
         self.emagnitude = 0.
         self.erms = 0.
         self.note = str(note)
-        self.pformat = "%04d %15.9f %05d %10.3f %10.6f %10.6f\n" 
+        self.pformat = "%04d %18.12f %05d %10.3f %10.6f %10.6f\n" 
         self.set_note( note)          # should set all values before opening log file
         self.set_sample_rate( bandwidth)
         self.set_logname(logname)
@@ -117,7 +117,7 @@ class ra_event_log(gr.sync_block):
             f.write(outline)
             outline = "# vlen      = %6d\n" % (self.vlen)
             f.write(outline)
-            outline = "#  N      MJD       second  micro sec.    Peak       RMS\n"
+            outline = "#  N      MJD          second  micro.sec    Peak       RMS\n"
             f.write(outline)
             f.close()
 

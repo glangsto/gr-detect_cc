@@ -61,17 +61,19 @@ namespace gr {
     {
      private:
       // values computed in this block
-      int d_vec_length;
+      int d_vec_length = 512;
       float d_dms = 4.0;
-      float d_f_obs;
-      float d_bw;
-      float d_t_int;
+      float d_f_obs = 1.;
+      float d_bw = 1.;
+      float d_t_int = 0.;
       int d_nt = 1;
+      int vlen = d_vec_length;
+      int vlen2 = vlen/2;
       double nsigma = 4.0;
       double peak = 0;        // peak, rms and date/time of detected event
       double rms = 0;         // rms of values in circular buffer
       double mjd = 0;         // modified Julian Date of event
-      gr_complex circular[MAX_BUFF];   // circular buffer for input samples
+      gr_complex circular[MAX_BUFF];
       float circular2[MAX_BUFF];   // circular buffer for input samples**2
       long inext = 0;         // next place for a sample in buffer
       long inext2 = MAX_BUFF/2;  // place to check for new peak
@@ -80,10 +82,11 @@ namespace gr {
       double sum2 = 0;        // sum of values squared
       double rms2 = 0;        // rms squared of values in circular buffer
       double oneovern = 1./double(MAX_BUFF);
-      bool bufferfull = 0;    // assume buffer is not full 
+      bool bufferfull = false;// assume buffer is not full 
       double nsigma_rms = 0;  // comparision value for event detection
       gr_complex samples[MAX_VLEN];  // output event buffer 
       bool initialized = 0;   // flag initializing output
+      double bufferdelay = float(MAX_VLEN/2)*1.E-6/d_bw;
       
      public:
       detect_impl(int vec_length,float dms, float f_obs, float bw, float t_int, int nt);
