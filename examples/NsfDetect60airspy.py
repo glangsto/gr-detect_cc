@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Nsf Astronomical Event Detect: 1MHz 
+# Title: Nsf Airspy Event Detect: 6MHz
 # Author: Glen Langston
-# Description: Airspy Mini 1st try
-# Generated: Sat Feb 16 16:47:02 2019
+# Description: Airspy
+# Generated: Tue Feb 19 14:28:31 2019
 ##################################################
+
+from distutils.version import StrictVersion
 
 if __name__ == '__main__':
     import ctypes
@@ -18,8 +20,9 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
 
-from PyQt4 import Qt
-from PyQt4.QtCore import QObject, pyqtSlot
+from PyQt5 import Qt
+from PyQt5 import Qt, QtCore
+from PyQt5.QtCore import QObject, pyqtSlot
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import gr
@@ -35,14 +38,16 @@ import radio_astro
 import sip
 import sys
 import time
+from gnuradio import qtgui
 
 
 class NsfDetect60airspy(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Nsf Astronomical Event Detect: 1MHz ")
+        gr.top_block.__init__(self, "Nsf Airspy Event Detect: 6MHz")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Nsf Astronomical Event Detect: 1MHz ")
+        self.setWindowTitle("Nsf Airspy Event Detect: 6MHz")
+        qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
         except:
@@ -60,37 +65,45 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         self.top_layout.addLayout(self.top_grid_layout)
 
         self.settings = Qt.QSettings("GNU Radio", "NsfDetect60airspy")
-        self.restoreGeometry(self.settings.value("geometry").toByteArray())
+
+        if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
+            self.restoreGeometry(self.settings.value("geometry").toByteArray())
+        else:
+            self.restoreGeometry(self.settings.value("geometry", type=QtCore.QByteArray))
 
         ##################################################
         # Variables
         ##################################################
         self.observer = observer = 'observers_save'
-        self.nsigma = nsigma = 4.0
+        self.nsigma = nsigma = 5.0
         self.fftsize = fftsize = 2048
         self.Telescope = Telescope = 'telescope_save'
         self.Mode = Mode = 2
         self.Gain1 = Gain1 = 14.0
-        self.Frequency = Frequency = 1420.4e6
+        self.Frequency = Frequency = 1420.4
         self.EventMode = EventMode = 0
         self.Elevation = Elevation = -90
         self.Device = Device = 'airspy,bias=1,pack=1'
-        self.Bandwidth = Bandwidth = 6.e6
+        self.Bandwidth = Bandwidth = 6.
         self.Azimuth = Azimuth = 0
 
         ##################################################
         # Blocks
         ##################################################
-        self._nsigma_range = Range(0., 10., .1, 4.0, 100)
+        self._nsigma_range = Range(0., 10., .1, 5.0, 100)
         self._nsigma_win = RangeWidget(self._nsigma_range, self.set_nsigma, 'N Sigma', "counter", float)
-        self.top_grid_layout.addWidget(self._nsigma_win, 0,3,1,1)
+        self.top_grid_layout.addWidget(self._nsigma_win, 0, 3, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(3,4)]
         self._fftsize_tool_bar = Qt.QToolBar(self)
         self._fftsize_tool_bar.addWidget(Qt.QLabel('Window_size'+": "))
         self._fftsize_line_edit = Qt.QLineEdit(str(self.fftsize))
         self._fftsize_tool_bar.addWidget(self._fftsize_line_edit)
         self._fftsize_line_edit.returnPressed.connect(
         	lambda: self.set_fftsize(int(str(self._fftsize_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._fftsize_tool_bar, 1,3,1,1)
+        self.top_grid_layout.addWidget(self._fftsize_tool_bar, 1, 3, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(3,4)]
         self._Mode_options = (1, 2, )
         self._Mode_labels = ('Monitor', 'Detect', )
         self._Mode_tool_bar = Qt.QToolBar(self)
@@ -102,21 +115,27 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         self._Mode_callback(self.Mode)
         self._Mode_combo_box.currentIndexChanged.connect(
         	lambda i: self.set_Mode(self._Mode_options[i]))
-        self.top_grid_layout.addWidget(self._Mode_tool_bar, 7,0,2,2)
+        self.top_grid_layout.addWidget(self._Mode_tool_bar, 7, 0, 2, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(7,9)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self._Gain1_tool_bar = Qt.QToolBar(self)
         self._Gain1_tool_bar.addWidget(Qt.QLabel('Gain1'+": "))
         self._Gain1_line_edit = Qt.QLineEdit(str(self.Gain1))
         self._Gain1_tool_bar.addWidget(self._Gain1_line_edit)
         self._Gain1_line_edit.returnPressed.connect(
         	lambda: self.set_Gain1(eng_notation.str_to_num(str(self._Gain1_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Gain1_tool_bar, 3,0,1,1)
+        self.top_grid_layout.addWidget(self._Gain1_tool_bar, 3, 0, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(3,4)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,1)]
         self._Frequency_tool_bar = Qt.QToolBar(self)
-        self._Frequency_tool_bar.addWidget(Qt.QLabel('Freq. Hz'+": "))
+        self._Frequency_tool_bar.addWidget(Qt.QLabel('Freq. (MHz)'+": "))
         self._Frequency_line_edit = Qt.QLineEdit(str(self.Frequency))
         self._Frequency_tool_bar.addWidget(self._Frequency_line_edit)
         self._Frequency_line_edit.returnPressed.connect(
         	lambda: self.set_Frequency(eng_notation.str_to_num(str(self._Frequency_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Frequency_tool_bar, 1,5,1,1)
+        self.top_grid_layout.addWidget(self._Frequency_tool_bar, 1, 5, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(5,6)]
         self._EventMode_options = (0, 1, )
         self._EventMode_labels = ('Wait', 'Write', )
         self._EventMode_tool_bar = Qt.QToolBar(self)
@@ -128,24 +147,30 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         self._EventMode_callback(self.EventMode)
         self._EventMode_combo_box.currentIndexChanged.connect(
         	lambda i: self.set_EventMode(self._EventMode_options[i]))
-        self.top_grid_layout.addWidget(self._EventMode_tool_bar, 5, 0,2, 2)
+        self.top_grid_layout.addWidget(self._EventMode_tool_bar, 5, 0, 2, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(5,7)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self._Device_tool_bar = Qt.QToolBar(self)
         self._Device_tool_bar.addWidget(Qt.QLabel('Dev'+": "))
         self._Device_line_edit = Qt.QLineEdit(str(self.Device))
         self._Device_tool_bar.addWidget(self._Device_line_edit)
         self._Device_line_edit.returnPressed.connect(
         	lambda: self.set_Device(str(str(self._Device_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Device_tool_bar, 2,0,1,2)
+        self.top_grid_layout.addWidget(self._Device_tool_bar, 2, 0, 1, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(2,3)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self._Bandwidth_tool_bar = Qt.QToolBar(self)
-        self._Bandwidth_tool_bar.addWidget(Qt.QLabel('Bandwidth'+": "))
+        self._Bandwidth_tool_bar.addWidget(Qt.QLabel('Band. (MHz)'+": "))
         self._Bandwidth_line_edit = Qt.QLineEdit(str(self.Bandwidth))
         self._Bandwidth_tool_bar.addWidget(self._Bandwidth_line_edit)
         self._Bandwidth_line_edit.returnPressed.connect(
         	lambda: self.set_Bandwidth(eng_notation.str_to_num(str(self._Bandwidth_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Bandwidth_tool_bar, 1,6,1,1)
+        self.top_grid_layout.addWidget(self._Bandwidth_tool_bar, 1, 6, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(6,7)]
         self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + Device )
-        self.rtlsdr_source_0.set_sample_rate(Bandwidth)
-        self.rtlsdr_source_0.set_center_freq(Frequency, 0)
+        self.rtlsdr_source_0.set_sample_rate(Bandwidth*1e6)
+        self.rtlsdr_source_0.set_center_freq(Frequency*1e6, 0)
         self.rtlsdr_source_0.set_freq_corr(0, 0)
         self.rtlsdr_source_0.set_dc_offset_mode(0, 0)
         self.rtlsdr_source_0.set_iq_balance_mode(0, 0)
@@ -155,11 +180,11 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         self.rtlsdr_source_0.set_bb_gain(12, 0)
         self.rtlsdr_source_0.set_antenna('', 0)
         self.rtlsdr_source_0.set_bandwidth(Bandwidth, 0)
-          
+
         (self.rtlsdr_source_0).set_processor_affinity([3])
-        self.radio_astro_detect_0 = radio_astro.detect(fftsize, nsigma, Frequency*1.E-6, Bandwidth*1.e-6, fftsize*1.e-6/Bandwidth, Mode)
-        self.ra_event_sink_0 = ra_event_sink.ra_event_sink('Watch.not', fftsize, Bandwidth*1.E-6, EventMode)
-        self.ra_event_log_0 = ra_event_log.ra_event_log( '', 'First Airspy Overnight event test', fftsize, Bandwidth*1.E-6)
+        self.radio_astro_detect_0 = radio_astro.detect(fftsize, nsigma, Frequency, Bandwidth, fftsize*1.e-6/Bandwidth, Mode)
+        self.ra_event_sink_0 = ra_event_sink.ra_event_sink('Watch.not', fftsize, Bandwidth, EventMode)
+        self.ra_event_log_0 = ra_event_log.ra_event_log( '', 'First Airspy Overnight event test', fftsize, Bandwidth)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_c(
         	fftsize, #size
         	Bandwidth, #samp_rate
@@ -168,19 +193,20 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         )
         self.qtgui_time_sink_x_0_0.set_update_time(1)
         self.qtgui_time_sink_x_0_0.set_y_axis(-.3, .3)
-        
+
         self.qtgui_time_sink_x_0_0.set_y_label('Event', "")
-        
+
         self.qtgui_time_sink_x_0_0.enable_tags(-1, True)
         self.qtgui_time_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
         self.qtgui_time_sink_x_0_0.enable_autoscale(True)
         self.qtgui_time_sink_x_0_0.enable_grid(False)
         self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0_0.enable_control_panel(False)
-        
+        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
+
         if not True:
           self.qtgui_time_sink_x_0_0.disable_legend()
-        
+
         labels = ['I', 'Q', '', '', '',
                   '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
@@ -193,8 +219,8 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
                    -1, -1, -1, -1, -1]
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
-        
-        for i in xrange(2*1):
+
+        for i in xrange(2):
             if len(labels[i]) == 0:
                 if(i % 2 == 0):
                     self.qtgui_time_sink_x_0_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
@@ -207,16 +233,20 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0_0.set_line_style(i, styles[i])
             self.qtgui_time_sink_x_0_0.set_line_marker(i, markers[i])
             self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win, 2,3,10,5)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win, 2, 3, 10, 5)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(2,12)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(3,8)]
         self._observer_tool_bar = Qt.QToolBar(self)
         self._observer_tool_bar.addWidget(Qt.QLabel('Who'+": "))
         self._observer_line_edit = Qt.QLineEdit(str(self.observer))
         self._observer_tool_bar.addWidget(self._observer_line_edit)
         self._observer_line_edit.returnPressed.connect(
         	lambda: self.set_observer(str(str(self._observer_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._observer_tool_bar, 0,0,1,2)
+        self.top_grid_layout.addWidget(self._observer_tool_bar, 0, 0, 1, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fftsize)
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, fftsize)
         self._Telescope_tool_bar = Qt.QToolBar(self)
@@ -225,31 +255,37 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         self._Telescope_tool_bar.addWidget(self._Telescope_line_edit)
         self._Telescope_line_edit.returnPressed.connect(
         	lambda: self.set_Telescope(str(str(self._Telescope_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Telescope_tool_bar, 1,0,1,2)
+        self.top_grid_layout.addWidget(self._Telescope_tool_bar, 1, 0, 1, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self._Elevation_tool_bar = Qt.QToolBar(self)
         self._Elevation_tool_bar.addWidget(Qt.QLabel('Elevation'+": "))
         self._Elevation_line_edit = Qt.QLineEdit(str(self.Elevation))
         self._Elevation_tool_bar.addWidget(self._Elevation_line_edit)
         self._Elevation_line_edit.returnPressed.connect(
         	lambda: self.set_Elevation(eng_notation.str_to_num(str(self._Elevation_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Elevation_tool_bar, 0,6,1,1)
+        self.top_grid_layout.addWidget(self._Elevation_tool_bar, 0, 6, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(6,7)]
         self._Azimuth_tool_bar = Qt.QToolBar(self)
         self._Azimuth_tool_bar.addWidget(Qt.QLabel('Azimuth'+": "))
         self._Azimuth_line_edit = Qt.QLineEdit(str(self.Azimuth))
         self._Azimuth_tool_bar.addWidget(self._Azimuth_line_edit)
         self._Azimuth_line_edit.returnPressed.connect(
         	lambda: self.set_Azimuth(eng_notation.str_to_num(str(self._Azimuth_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._Azimuth_tool_bar, 0,5,1,1)
+        self.top_grid_layout.addWidget(self._Azimuth_tool_bar, 0, 5, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(5,6)]
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_stream_to_vector_0, 0), (self.radio_astro_detect_0, 0))    
-        self.connect((self.blocks_vector_to_stream_0, 0), (self.qtgui_time_sink_x_0_0, 0))    
-        self.connect((self.radio_astro_detect_0, 0), (self.blocks_vector_to_stream_0, 0))    
-        self.connect((self.radio_astro_detect_0, 0), (self.ra_event_log_0, 0))    
-        self.connect((self.radio_astro_detect_0, 0), (self.ra_event_sink_0, 0))    
-        self.connect((self.rtlsdr_source_0, 0), (self.blocks_stream_to_vector_0, 0))    
+        self.connect((self.blocks_stream_to_vector_0, 0), (self.radio_astro_detect_0, 0))
+        self.connect((self.blocks_vector_to_stream_0, 0), (self.qtgui_time_sink_x_0_0, 0))
+        self.connect((self.radio_astro_detect_0, 0), (self.blocks_vector_to_stream_0, 0))
+        self.connect((self.radio_astro_detect_0, 0), (self.ra_event_log_0, 0))
+        self.connect((self.radio_astro_detect_0, 0), (self.ra_event_sink_0, 0))
+        self.connect((self.rtlsdr_source_0, 0), (self.blocks_stream_to_vector_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "NsfDetect60airspy")
@@ -309,8 +345,8 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
     def set_Frequency(self, Frequency):
         self.Frequency = Frequency
         Qt.QMetaObject.invokeMethod(self._Frequency_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.Frequency)))
-        self.rtlsdr_source_0.set_center_freq(self.Frequency, 0)
-        self.radio_astro_detect_0.set_f_obs( self.Frequency*1.E-6)
+        self.rtlsdr_source_0.set_center_freq(self.Frequency*1e6, 0)
+        self.radio_astro_detect_0.set_f_obs( self.Frequency)
 
     def get_EventMode(self):
         return self.EventMode
@@ -340,11 +376,11 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
     def set_Bandwidth(self, Bandwidth):
         self.Bandwidth = Bandwidth
         Qt.QMetaObject.invokeMethod(self._Bandwidth_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.Bandwidth)))
-        self.rtlsdr_source_0.set_sample_rate(self.Bandwidth)
+        self.rtlsdr_source_0.set_sample_rate(self.Bandwidth*1e6)
         self.rtlsdr_source_0.set_bandwidth(self.Bandwidth, 0)
-        self.radio_astro_detect_0.set_bw( self.Bandwidth*1.e-6)
-        self.ra_event_sink_0.set_sample_rate( self.Bandwidth*1.E-6)
-        self.ra_event_log_0.set_sample_rate( self.Bandwidth*1.E-6)
+        self.radio_astro_detect_0.set_bw( self.Bandwidth)
+        self.ra_event_sink_0.set_sample_rate( self.Bandwidth)
+        self.ra_event_log_0.set_sample_rate( self.Bandwidth)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.Bandwidth)
 
     def get_Azimuth(self):
@@ -357,8 +393,7 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
 
 def main(top_block_cls=NsfDetect60airspy, options=None):
 
-    from distutils.version import StrictVersion
-    if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
+    if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
@@ -370,7 +405,7 @@ def main(top_block_cls=NsfDetect60airspy, options=None):
     def quitting():
         tb.stop()
         tb.wait()
-    qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
+    qapp.aboutToQuit.connect(quitting)
     qapp.exec_()
 
 

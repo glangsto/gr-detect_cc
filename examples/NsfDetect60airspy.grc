@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.10'?>
+<?grc format='1' created='3.7.11'?>
 <flow_graph>
   <timestamp>Sun Mar 11 16:57:49 2018</timestamp>
   <block>
@@ -22,7 +22,7 @@
     </param>
     <param>
       <key>description</key>
-      <value>Rtlsdr 1st try</value>
+      <value>Airspy</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>NsfDetect10rtlsdr</value>
+      <value>NsfDetect60airspy</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -78,7 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>Nsf Astronomical Event Detect: 1MHz </value>
+      <value>Nsf Airspy Event Detect: 6MHz</value>
     </param>
   </block>
   <block>
@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>6.e6</value>
+      <value>6.</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -152,7 +152,7 @@
     </param>
     <param>
       <key>label</key>
-      <value>Bandwidth</value>
+      <value>Band. (MHz)</value>
     </param>
     <param>
       <key>type</key>
@@ -344,7 +344,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>1420.4e6</value>
+      <value>1420.4</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -368,7 +368,7 @@
     </param>
     <param>
       <key>label</key>
-      <value>Freq. Hz</value>
+      <value>Freq. (MHz)</value>
     </param>
     <param>
       <key>type</key>
@@ -599,7 +599,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>4.0</value>
+      <value>5.0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -713,7 +713,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(256, 36)</value>
+      <value>(256, 148)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -764,7 +764,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(560, 16)</value>
+      <value>(632, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1110,6 +1110,10 @@
       <value>Bandwidth</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>0</value>
     </param>
@@ -1198,7 +1202,7 @@
     </param>
     <param>
       <key>sample_rate</key>
-      <value>Bandwidth*1.E-6</value>
+      <value>Bandwidth</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1241,7 +1245,7 @@
     </param>
     <param>
       <key>sample_rate</key>
-      <value>Bandwidth*1.E-6</value>
+      <value>Bandwidth</value>
     </param>
     <param>
       <key>setup</key>
@@ -1272,7 +1276,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(416, 128)</value>
+      <value>(424, 108)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1300,11 +1304,11 @@
     </param>
     <param>
       <key>bw</key>
-      <value>Bandwidth*1.e-6</value>
+      <value>Bandwidth</value>
     </param>
     <param>
       <key>f_obs</key>
-      <value>Frequency*1.E-6</value>
+      <value>Frequency</value>
     </param>
     <param>
       <key>t_int</key>
@@ -1343,7 +1347,7 @@
     </param>
     <param>
       <key>freq0</key>
-      <value>Frequency</value>
+      <value>Frequency*1e6</value>
     </param>
     <param>
       <key>gain_mode0</key>
@@ -2715,7 +2719,7 @@
     </param>
     <param>
       <key>sample_rate</key>
-      <value>Bandwidth</value>
+      <value>Bandwidth*1e6</value>
     </param>
     <param>
       <key>sync</key>
