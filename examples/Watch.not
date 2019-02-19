@@ -8,7 +8,7 @@
 # CITY      = Green Bank
 # REGION    = West Virginia
 # COUNTRY   = US
-# TELTYPE   = Pyramid Horn
+# TELTYPE   = Cone Horn
 # FRAME     = TOPO
 # GAINS     = 14.0; 11.0; 11.0
 # GAIN1     = 14.0
@@ -20,7 +20,7 @@
 # Duration  = 0.689015
 # DeltaX    = 5859.375
 # BUNIT     = Counts
-# NCHAN     = 2048
+# NCHAN     = 8192
 # NSPEC     = 1
 # NAVE      = 2
 # NMEDIAN   = 1024

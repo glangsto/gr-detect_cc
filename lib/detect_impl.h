@@ -27,8 +27,8 @@
 #define TIME_UTC    1
 #endif
 
-#define MAX_VLEN 4096
-#define MAX_BUFF (2*MAX_VLEN)
+#define MAX_VLEN 16384
+#define MAX_BUFF (2L*MAX_VLEN)
 
 // constants for calculating Modified Julian Date
 #define DaysPer400Years   (365L*400 + 97)

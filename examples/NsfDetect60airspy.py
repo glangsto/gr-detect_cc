@@ -5,7 +5,7 @@
 # Title: Nsf Airspy Event Detect: 6MHz
 # Author: Glen Langston
 # Description: Airspy
-# Generated: Tue Feb 19 14:28:31 2019
+# Generated: Tue Feb 19 14:38:25 2019
 ##################################################
 
 from distutils.version import StrictVersion
@@ -76,7 +76,7 @@ class NsfDetect60airspy(gr.top_block, Qt.QWidget):
         ##################################################
         self.observer = observer = 'observers_save'
         self.nsigma = nsigma = 5.0
-        self.fftsize = fftsize = 2048
+        self.fftsize = fftsize = 8192
         self.Telescope = Telescope = 'telescope_save'
         self.Mode = Mode = 2
         self.Gain1 = Gain1 = 14.0
