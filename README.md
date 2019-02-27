@@ -8,7 +8,7 @@ versions are compiled and installed using cmake.
 
 ### Observer Interface: NsfDetect10rtlsdr.grc
 
-!(/images/NsfDetect10rtlsdr.png)
+![Observer Inteface](/images/NsfDetect10rtlsdr.png)
 
 ### Executables
 
@@ -55,6 +55,6 @@ Where process-id is one of the higher cpu usage processes on your device.
 
 http://www.opensourceradiotelescopes.org/wk
 
-!(/images/NsfIntegrateRaw.png)
+![Documentation](/images/NsfIntegrateRaw.png)
 
 Glen Langston -- glen.i.langston@gmail.com -- 2019 February 27
