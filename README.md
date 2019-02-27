@@ -26,7 +26,7 @@ The GRC files are:
 
 1. eventwrite.grc - Event detection (python) with writing of events and logging a summary.
 
-The data go into the _events_ directory one directory up from the current directory.
+The data go into the _events_ directory, one directory up from the current directory.
 
 The '*.eve' files contain example event observations. 
 
