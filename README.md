@@ -3,7 +3,7 @@
 ### Nsf-Detect: Library of Gnuradio Companion (GRC) blocks, C++  and Python code for Radio Astronomy
 
 This repository contains both Python and C++ versions of the event capture software.
-The blocks with _detect_ names are the C++ versions.   The block with _event_ are the python versions.  Both
+The blocks with _detect_ names are the C++ versions.   The blocks with _event_ are the python versions.  Both
 versions are prepared and installed using _cmake_.
 
 ### Observer Interface: NsfDetect10rtlsdr.grc
