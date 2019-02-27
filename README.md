@@ -2,22 +2,23 @@
 
 ### Nsf-Detect: Library of Gnuradio Companion (GRC) blocks, C++  and Python code for Radio Astronomy
 
-This repository contains all modules in the gr-nsf github node plus new C++ code for efficient detection
-of radio transient events.
-
 This repository contains both Python and C++ version of the event capture software.
 The block _detect_ is the C++ version.   The block _event_ is the python version.   Both
 versions are compiled and installed using cmake.
 
 ### Observer Interface: NsfDetect10rtlsdr.grc
 
-![Observer Interface](/images/NsfDetect10rtlsdr.png)
+!(/images/NsfDetect10rtlsdr.png)
 
 ### Executables
 
 The executables are in the _examples_ directory.
 
 The GRC files are:
+
+1. NsfDetect10rtlsdr.grc - Detect events at 1 MHz sample rate (I+Q) using an RTL SDR dongle.
+
+1. NsfDetect60airspy.grc - Detect events at 6 MHz sample rate (I+Q) using an AIRSPY Mini dongle.
 
 1. eventdemo.grc - Simple graph block testing python version of event detection.
 
@@ -40,7 +41,7 @@ The hardkernel.com Odriod XU4 octa-core processor can capture all 6 MHz of data 
 
 The linux 'taskset' command can be used to select the 2 GHz processors (number 4,5,6 and 7) and one slower processor:
 
-`taskset -c 7,6,5,4,3 python NsfIntegrate60.py`
+`taskset -c 7,6,5,4,3 python NsfDetect60airspy.py`
 
 You can use the _top_ command to see which processes are using the CPU on your computer.
 
@@ -54,6 +55,6 @@ Where process-id is one of the higher cpu usage processes on your device.
 
 http://www.opensourceradiotelescopes.org/wk
 
-![Observer Interface Raw Signals](/images/NsfIntegrateRaw.png)
+!(/images/NsfIntegrateRaw.png)
 
 Glen Langston -- glen.i.langston@gmail.com -- 2019 February 27
