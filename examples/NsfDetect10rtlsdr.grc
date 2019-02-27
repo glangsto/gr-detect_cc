@@ -297,7 +297,7 @@
     </param>
     <param>
       <key>label</key>
-      <value>Event Mode</value>
+      <value>Write Mode</value>
     </param>
     <param>
       <key>labels</key>
@@ -474,7 +474,7 @@
     </param>
     <param>
       <key>label</key>
-      <value>Mode</value>
+      <value>Detect Mode</value>
     </param>
     <param>
       <key>labels</key>
@@ -529,7 +529,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>telescope_save</value>
+      <value>Horn</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -670,7 +670,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>observers_save</value>
+      <value>Aficionados</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1257,7 +1257,7 @@
     </param>
     <param>
       <key>setup</key>
-      <value>Watch.not</value>
+      <value>Detect.not</value>
     </param>
     <param>
       <key>vlen</key>
@@ -2631,7 +2631,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 116)</value>
+      <value>(0, 132)</value>
     </param>
     <param>
       <key>_rotation</key>

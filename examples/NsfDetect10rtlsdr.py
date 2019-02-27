@@ -5,7 +5,7 @@
 # Title: Nsf Astronomical Event Detect: 1MHz
 # Author: Glen Langston
 # Description: RTLSDR Event Detect
-# Generated: Wed Feb 27 15:25:20 2019
+# Generated: Wed Feb 27 16:44:32 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -68,10 +68,10 @@ class NsfDetect10rtlsdr(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.observer = observer = 'observers_save'
+        self.observer = observer = 'Aficionados'
         self.nsigma = nsigma = 4.0
         self.fftsize = fftsize = 2048
-        self.Telescope = Telescope = 'telescope_save'
+        self.Telescope = Telescope = 'Horn'
         self.Mode = Mode = 2
         self.Gain1 = Gain1 = 14.0
         self.Frequency = Frequency = 1420.4e6
@@ -105,7 +105,7 @@ class NsfDetect10rtlsdr(gr.top_block, Qt.QWidget):
         self._Mode_options = (1, 2, )
         self._Mode_labels = ('Monitor', 'Detect', )
         self._Mode_tool_bar = Qt.QToolBar(self)
-        self._Mode_tool_bar.addWidget(Qt.QLabel('Mode'+": "))
+        self._Mode_tool_bar.addWidget(Qt.QLabel('Detect Mode'+": "))
         self._Mode_combo_box = Qt.QComboBox()
         self._Mode_tool_bar.addWidget(self._Mode_combo_box)
         for label in self._Mode_labels: self._Mode_combo_box.addItem(label)
@@ -143,7 +143,7 @@ class NsfDetect10rtlsdr(gr.top_block, Qt.QWidget):
         self._EventMode_options = (0, 1, )
         self._EventMode_labels = ('Wait', 'Write', )
         self._EventMode_tool_bar = Qt.QToolBar(self)
-        self._EventMode_tool_bar.addWidget(Qt.QLabel('Event Mode'+": "))
+        self._EventMode_tool_bar.addWidget(Qt.QLabel('Write Mode'+": "))
         self._EventMode_combo_box = Qt.QComboBox()
         self._EventMode_tool_bar.addWidget(self._EventMode_combo_box)
         for label in self._EventMode_labels: self._EventMode_combo_box.addItem(label)
@@ -193,7 +193,7 @@ class NsfDetect10rtlsdr(gr.top_block, Qt.QWidget):
 
         (self.rtlsdr_source_0).set_processor_affinity([3])
         self.radio_astro_detect_0 = radio_astro.detect(fftsize, nsigma, Frequency*1.E-6, Bandwidth*1.e-6, fftsize*1.e-6/Bandwidth, Mode)
-        self.ra_event_sink_0 = ra_event_sink.ra_event_sink('Watch.not', fftsize, Bandwidth*1.E-6, EventMode)
+        self.ra_event_sink_0 = ra_event_sink.ra_event_sink('Detect.not', fftsize, Bandwidth*1.E-6, EventMode)
         self.ra_event_log_0 = ra_event_log.ra_event_log( '', 'First Airspy Overnight event test', fftsize, Bandwidth*1.E-6)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_c(
         	fftsize, #size
