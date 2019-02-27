@@ -51,10 +51,17 @@ Move all the other processes to other cores with the taskset commands like:
 
 Where process-id is one of the higher cpu usage processes on your device.
 
+### Test without an Software Defined Radio
+The event detection (both C++ and Python) can be tested without hardware device.
+Below is the detect_log.grc design that tests the C++ code.
+
+![Documentation](/images/detect_log.png)
+
+
 ### Documentation
 
 http://www.opensourceradiotelescopes.org/wk
 
-![Documentation](/images/detect_log.png)
+
 
 Glen Langston -- glen.i.langston@gmail.com -- 2019 February 27
