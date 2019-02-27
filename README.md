@@ -16,9 +16,9 @@ The executables are in the _examples_ directory.
 
 The GRC files are:
 
-1. NsfDetect10rtlsdr.grc - Detect events at 1 MHz sample rate (I+Q) using an RTL SDR dongle.
+1. NsfDetect10rtlsdr.grc - Detect events (C++ version) at 1 MHz sample rate (both I+Q) using an RTL SDR dongle.
 
-1. NsfDetect60airspy.grc - Detect events at 6 MHz sample rate (I+Q) using an AIRSPY Mini dongle.
+1. NsfDetect60airspy.grc - Detect events (C++ version) at 6 MHz sample rate (both I+Q) using an AIRSPY Mini dongle.
 
 1. eventdemo.grc - Simple graph block testing python version of event detection.
 
@@ -51,8 +51,8 @@ Move all the other processes to other cores with the taskset commands like:
 
 Where process-id is one of the higher cpu usage processes on your device.
 
-### Test without an Software Defined Radio
-The event detection (both C++ and Python) can be tested without hardware device.
+### Test without a Software Defined Radio Device
+The event detection code (both C++ and Python) can be tested without hardware device.
 Below is the detect_log.grc design that tests the C++ code.
 
 ![Documentation](/images/detect_log.png)
