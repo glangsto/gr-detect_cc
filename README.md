@@ -9,65 +9,31 @@ This repository contains both Python and C++ version of the event capture softwa
 The block _detect_ is the C++ version.   The block _event_ is the python version.   Both
 versions are compiled and installed using cmake.
 
-### Observer Interface: NsfIntegrate60.grc
+### Observer Interface: NsfDetect10rtlsdr.grc
 
-![Observer Interface](/images/NsfIntegrate.png)
+![Observer Interface](/images/NsfDetect10rtlsdr.png)
 
-### Documentation
-
-http://www.opensourceradiotelescopes.org/wk
+### Executables
 
 The executables are in the _examples_ directory.
 
 The GRC files are:
 
-1. vectordemo.grc - Simple test block comparing the simulated data after averaging and medianing (no data source needed).
+1. eventdemo.grc - Simple graph block testing python version of event detection.
 
-1. Integrate_test.grc - More complicated test function using all blocks in the NsfIntegrate Designs except
-the *Osmosdr* block.
+1. detect_log.grc - Simple graph block testing the C++ version of event detection.
 
-1. NsfIntegrate60.grc - Block configured to use an AIRSPY mini with 6.0 MHz bandwidth for Radio Astronomy Observations
+1. eventwrite.grc - Event detection (python) with writing of events and logging a summary.
 
-1. NsfIntegrate20.grc - Block configured to use an RTL SDR dongle with 2.0 MHz bandwidth for Radio Astronomy Observations
+The data go into the _events_ directory one directory up from the current directory.
 
-1. eventdetect.grc - Event detection demonstration graph.
+The '*.eve' files contain example event observations. 
 
-1. eventwrite.grc - Event detection with writing of events and logging a summary.
-
-The '*.ast' files contain example spectral line observations. 
-
-The '*.hot' files contains hot-load calibration observations.  The NsfIntegrate blocks can overwrite these files.
+The '*.log' files contain logs of events detected.
 
 Configuration files are used to record some input parameters and allow restarting tests and survey observations.
 
-1.  Watch60.conf is a configuration file for the NsfIntegrate60.grc AIRSPY 6.0 MHz observing block
-2.  Watch20.conf is a configuration file for the NsfIntegrate20.grc RTLSDR 2.0 MHz observing block
-
-The Watch.not is a *Note File* describing the astronomical setup.  This file also contains a spectrum observation,
-as the goal of the data header is to allow a complete re-observation, based on the previous header values.
-
-### To test these blocks, without installing into the standard GRC path, use these commands:
-
-`cd examples`
-
-`export PYTHONPATH=../python:$PYTHONPATH`
-
-and update your ~/.gnuradio/config.conf file with this path:
-
-`[grc]`
-
-`local_blocks_path = ./:../grc`
-
-Finally run the GRC files:
-
-`gnuradio-companion vectordemo.grc`
-
-or 
-
-`gnuradio-companion NsfIntegrate60.grc`
-
-To start observing.  This graph assumes you have an AIRSPY mini.  If you have a different device, you'll have
-to edit the graph with the appropriate configuration.
+1.  Detect.conf is a configuration file for the NsfIntegrate60.grc AIRSPY 6.0 MHz observing block
 
 ### Optomizing operation
 The hardkernel.com Odriod XU4 octa-core processor can capture all 6 MHz of data from an AIRSPY-mini, if the 2 GHz processors are selected.  After recreating the design on your local computer using GRC, then exit and run python from the command line.
