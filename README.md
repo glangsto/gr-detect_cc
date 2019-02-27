@@ -55,6 +55,6 @@ Where process-id is one of the higher cpu usage processes on your device.
 
 http://www.opensourceradiotelescopes.org/wk
 
-![Documentation](/images/NsfIntegrateRaw.png)
+![Documentation](/images/detect_log.png)
 
 Glen Langston -- glen.i.langston@gmail.com -- 2019 February 27
