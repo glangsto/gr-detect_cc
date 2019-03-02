@@ -599,6 +599,8 @@ class Spectrum(object):
 # scan the rows of the file stored in lines, and put the values into some variables:
         for line in inlines:
             parts = line.split()
+            if len(parts) < 2:
+                continue
             if linecount == 0:
                 parts[1] = parts[1].upper()
                 if parts[1] != 'FILE:':
