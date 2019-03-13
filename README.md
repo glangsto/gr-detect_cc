@@ -55,10 +55,10 @@ Where process-id is one of the higher cpu usage processes on your device.
 ![Five Day Survey](/images/PeakEvent19March6.png)
 
 We completed the GnuRadio C++ code and flow graph and ran observations for 5 days, from March 5 to 9, 2019.
-The tests used a 32 diameter Horn with an effective system temperature of 120K.   The tests used an AIRSPY mini
-software defined radio.
+The tests used a 32-inch diameter Horn with amplifiers provided by Kevin Bandura (of UVA).   Our measurements showed the system had an effective system temperature of 120K.   The tests used an AIRSPY-mini
+software defined radio, running with 6 MHz sample rate.
 
-During this time, we identified events with signficance greater tha 6-sigma compared to the RMS noise in the
+During this time, we configured the system to identify events with signficance greater tha 6-sigma, compared to the RMS noise in the
 data stream.    For each event, we recorded 16384 I,Q samples, at 6 MHz sample rate, centered on the event.
 These 16384 samples corresponds to a total integration time of 0.00273 seconds, with 0.00137 seconds before the
 event and 0.00137 seconds after the event.
