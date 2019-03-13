@@ -55,7 +55,33 @@ Where process-id is one of the higher cpu usage processes on your device.
 The event detection code (both C++ and Python) can be tested without hardware device.
 Below is the detect_log.grc design that tests the C++ code.
 
-![Documentation](/images/detect_log.png)
+## Five Day Observing Test.
+![Five Day Survey](/images/PeakEvent19March6.png)
+
+We completed the GnuRadio C++ code and flow graph and ran observations for 5 days, from March 5 to 9, 2019.
+The tests used a 32 diameter Horn with an effective system temperature of 120K.   The tests used an AIRSPY mini
+software defined radio.
+
+During this time, we identified events with signficance greater tha 6-sigma compared to the RMS noise in the
+data stream.    For each event, we recorded 16384 I,Q samples, at 6 MHz sample rate, centered on the event.
+These 16384 samples corresponds to a total integration time of 0.00273 seconds, with 0.00137 seconds before the
+event and 0.00137 seconds after the event.
+
+In the plot above, we zoom into the Peak event for March 6, 2019.   This time series shows a rapid rise, followed by a slower decay.
+
+We wrote a program, "E", to plot individual events (available from github via a clone of http://github.com/glangsto/analyze),
+and a program, "FFT", which Fourier Transforms the time series of samples and also counts events in the files.
+The Event Count rate as a function of time of day shows some interesting features.  The time series is plotted below.
+
+![Five Day Survey](/images/PeakEvent19March6.png)
+
+###
+
+![Documentation](/images/EventsDetected6Sigma19March5-9.png)
+
+There is clearly a time dependence on count rate.    It seems that more events are detected during the day light hours.
+The Local Standard Time on the East Coast is UTC-5.  So UTC=0 corresponds to 19:00 EST or 7 PM.
+The count rate increases signficantly at UTC=11, corrsponding to 6:00 AM EST.
 
 
 ### Documentation
