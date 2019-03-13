@@ -20,11 +20,11 @@ The GRC files are:
 
 1. NsfDetect60airspy.grc - Detect events (C++ version) at 6 MHz sample rate (both I+Q) using an AIRSPY Mini dongle.
 
-1. eventdemo.grc - Simple graph block testing python version of event detection.
+1. eventdemo.grc - Simple graph block testing the python version of event detection (no hardware needed).
 
-1. detect_log.grc - Simple graph block testing the C++ version of event detection.
+1. detect_log.grc - Simple graph block for  testing the C++ version of event detection (no hardware needed).
 
-1. eventwrite.grc - Event detection (python) with writing of events and logging a summary.
+1. eventwrite.grc - Event detection (python) with writing of events and logging a summary.  This graph requires a software defined radio.
 
 The data go into the _events_ directory, one directory up from the current directory.
 
@@ -51,10 +51,6 @@ Move all the other processes to other cores with the taskset commands like:
 
 Where process-id is one of the higher cpu usage processes on your device.
 
-### Test without a Software Defined Radio Device
-The event detection code (both C++ and Python) can be tested without hardware device.
-Below is the detect_log.grc design that tests the C++ code.
-
 ## Five Day Observing Test.
 ![Five Day Survey](/images/PeakEvent19March6.png)
 
@@ -73,8 +69,6 @@ We wrote a program, "E", to plot individual events (available from github via a 
 and a program, "FFT", which Fourier Transforms the time series of samples and also counts events in the files.
 The Event Count rate as a function of time of day shows some interesting features.  The time series is plotted below.
 
-![Five Day Survey](/images/PeakEvent19March6.png)
-
 ###
 
 ![Documentation](/images/EventsDetected6Sigma19March5-9.png)
@@ -82,6 +76,11 @@ The Event Count rate as a function of time of day shows some interesting feature
 There is clearly a time dependence on count rate.    It seems that more events are detected during the day light hours.
 The Local Standard Time on the East Coast is UTC-5.  So UTC=0 corresponds to 19:00 EST or 7 PM.
 The count rate increases signficantly at UTC=11, corrsponding to 6:00 AM EST.
+
+The source of these flash events is detected is uncertain.  They may be due to the Sun or some terrestrial sources, like airplanes flying through the beam of the telescope.
+
+The rarer, nightly, events may be due to cosmic-rays colliding with the Earth's atmosphere, creating radio flashes.
+
 
 
 ### Documentation
