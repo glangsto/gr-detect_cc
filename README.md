@@ -77,9 +77,9 @@ There is clearly a time dependence on count rate.    It seems that more events a
 The Local Standard Time on the East Coast is UTC-5.  So UTC=0 corresponds to 19:00 EST or 7 PM.
 The count rate increases signficantly at UTC=11, corrsponding to 6:00 AM EST.
 
-The source of these flash events is detected is uncertain.  They may be due to the Sun or some terrestrial sources, like airplanes flying through the beam of the telescope.
+The source of these detected, flash, events is uncertain.  They may be due to the Sun or some terrestrial sources, like airplanes flying through the beam of the telescope.
 
-The rarer, nightly, events may be due to cosmic-rays colliding with the Earth's atmosphere, creating radio flashes.
+The rarer, night-time, events may be due to cosmic-rays colliding with the Earth's atmosphere, creating radio flashes.
 
 
 
