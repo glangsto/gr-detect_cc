@@ -87,6 +87,18 @@ The rarer, night-time, events may be due to cosmic-rays colliding with the Earth
 
 http://www.opensourceradiotelescopes.org/wk
 
+### Installation
 
+This software is complied using the standard proceedure.  Ie
 
-Glen Langston -- glen.i.langston@gmail.com -- 2019 February 27
+``` 
+git clone http://www.github.com/glangsto/gr-detect_cc
+cd gr-detect_cc
+mkdir build
+cd build
+cmake ../
+make 
+sudo make install
+```
+
+Glen Langston -- glen.i.langston@gmail.com -- 2019 March 13
