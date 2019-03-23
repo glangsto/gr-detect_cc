@@ -5,7 +5,7 @@
 # Title: NsfIntegrate: Average+Record Astronomical Obs.
 # Author: Glen Langston
 # Description: AIRSPY Radio Astronomy
-# Generated: Sat Mar 23 13:15:36 2019
+# Generated: Sat Mar 23 13:28:19 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -116,7 +116,7 @@ class NsfIntegrate60(gr.top_block, Qt.QWidget):
         self._device_save_config = ConfigParser.ConfigParser()
         self._device_save_config.read(ConfigFile)
         try: device_save = self._device_save_config.get('main', 'device')
-        except: device_save = 'pluto=0'
+        except: device_save = 'airspy,bias=1,pack=1'
         self.device_save = device_save
         self.H1 = H1 = 1420.406E6
         self._Gain1s_config = ConfigParser.ConfigParser()

@@ -550,7 +550,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(528, 626)</value>
+      <value>(488, 544)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -952,7 +952,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>pluto=0</value>
+      <value>airspy,bias=1,pack=1</value>
     </param>
     <param>
       <key>_enabled</key>
