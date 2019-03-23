@@ -246,6 +246,11 @@ class ra_ascii_sink(gr.sync_block):
         The observing type is an integer with enumerated values
         """
         self.obstype = int(obstype)
+        if obstype == radioastronomy.OBSHOT or obstype == radioastronomy.OBSCOLD:
+            if self.obs.telel > 0.:
+                self.obstype = radioastronomy.OBSCOLD
+            else:
+                self.obstype = radioastronomy.OBSHOT
         print "Observation Type : ", radioastronomy.obslabels[self.obstype]
 
     def set_observers(self, observers, dosave=True):

@@ -291,6 +291,11 @@ class ra_integrate(gr.sync_block):
         Update the observing type, one of Survey, Wait, Cold, Hot or Ref
         """
         self.obstype = int(obstype)
+        if obstype == radioastronomy.OBSHOT or obstype == radioastronomy.OBSCOLD:
+            if self.obs.telel > 0.:
+                self.obstype = radioastronomy.OBSCOLD
+            else:
+                self.obstype = radioastronomy.OBSHOT
         print "Observation Type : ", radioastronomy.obslabels[self.obstype]
 
     def set_inttype(self, inttype):
