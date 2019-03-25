@@ -2,6 +2,7 @@
 Class defining a Radio Frequency Spectrum
 Includes reading and writing ascii files
 HISTORY
+19MAR25 GIL remove duplicate __init__
 19FEB21 GIL copy data without interpreting
 19JAN16 GIL add Event Reading and Writing
 18DEC11 GIL add channel to freq or velocity functions
@@ -61,10 +62,59 @@ clight = 299792458. # speed of light in m/sec
 TIMEPARTS = 2   # define time axis of an event; only I and Q 
 #TIMEPARTS = 4  # defien time axis of an event; N Time I and Q
 
-### average two utcs using the strange steps required by datetime
-def aveutcs(utc1, utc2):
+def degree2float(instring, hint):
     """
-    Ave Utcs takes as input two utc times and returns the average of these utcs
+    degree2float() takes an input angle string in "dd:MM:ss.sss" format or dd.dd
+    and returns a floating point value in degrees
+    """
+    outfloat = 0.0
+    parts = instring.split(':')
+    if len(parts) == 1:  # if only one part, then degrees
+        outfloat = float(instring)
+    elif len(parts) == 3:  # if three parts, then dd:mm:ss
+        anangle = angles.DeltaAngle(instring)
+        outfloat = anangle.d
+    else:
+        print "%s format error: %s, zero returned " % (hint, instring)
+    return outfloat
+
+def hour2float(instring, hint):
+    """
+    hour2float() takes an input hours string in "hh:MM:ss.sss" format or hh.hhh
+    and returns a floating point value in degrees
+    """
+    outfloat = 0.0
+    parts = instring.split(':')
+    if len(parts) == 1:  # if only one part, then degrees
+        outfloat = float(instring)
+    elif len(parts) == 3:  # if three parts, then dd:mm:ss
+        anangle = angles.AlphaAngle(instring)
+        outfloat = anangle.d
+    else:
+        print "%s format error: %s, zero returned " % (hint, instring)
+    return outfloat
+
+def time2float(instring, hint):
+    """
+    time2float() takes an input time string in "hh:MM:ss.sss" or ss.sss format
+    and returns a floating point time value in seconds
+    """
+    outfloat = 0.0
+    parts = instring.split(':')
+    if len(parts) == 1:  # if only one part, then degrees
+        outfloat = float(instring)
+    elif len(parts) == 3:  # if three parts, then dd:mm:ss
+        atime = angles.AlphaAngle(instring)
+        outfloat = atime.h*3600.
+    else:
+        print "%s format error: %s, zero returned " % (hint, instring)
+    return outfloat
+
+
+### average two utcs using the strange steps required by datetime
+def aveutcs( utc1, utc2):
+    """
+    Ave Utcs takes as input two utc time and returns the average of these utcs
     Input and output 1st output are in datetime format.  The second output
     is the time interval between start and stop in seconds
     Glen Langston, 2018 April 20
@@ -80,7 +130,7 @@ def aveutcs(utc1, utc2):
     duration = dt.total_seconds()
     dt2 = dt/2
     # compute the average time of obs
-    utcout = utc1 + dt2
+    utcout  = utc1 + dt2
     return (utcout, duration)
 
 ###
@@ -90,64 +140,64 @@ def aveutcs(utc1, utc2):
 def iplatlon():
     """
     iplatlon() uses the ip address to get the latitude and longitude
-    The latitude and longitude are only rough, but usually
+    The latitude and longitude are only rough, but usually 
     better han 100 km accuracy.  This is good enough for small antennas.
     """
     # default values for Green Bank, WV
-    city = 'Green Bank'
-    region = 'West Virginia'
-    country = 'USA'
-    lon = float(-79.8)
-    lat = float(+38.4)
+    City = 'Green Bank'
+    Region = 'West Virginia'
+    Country = 'USA'
+    lon = float( -79.8)
+    lat = float( +38.4)
     try:
         import re
         import json
         from urllib2 import urlopen
-    except ImportError:
+    except:
         print 'Can not find Python code for:'
         print 'import re'
         print 'import json'
         print 'from urllib2 import urlopen'
         # returning Green bank
-        return city, region, country, lat, lon
+        return City, Region, Country, lat, lon
 
     try:
         data = str(urlopen('http://checkip.dyndns.com/').read())
     except:
         print 'Can not open internet access to get Location'
         # returning Green bank
-        return city, region, country, lat, lon
+        return City, Region, Country, lat, lon
 
     try:
         IP = re.compile(r'(\d+.\d+.\d+.\d+)').search(data).group(1)
     except:
         print 'Can not parse ip string'
-        return city, region, country, lat, lon
+        return City, Region, Country, lat, lon
     try:
         url = 'http://ipinfo.io/' + IP + '/json'
         response = urlopen(url)
         data = json.load(response)
     except:
         print 'Can not get ip location from internet'
-        return city, region, country, lat, lon
+        return City, Region, Country, lat, lon
 
-    org = data['org']
-    city = data['city']
-    country = data['country']
-    region = data['region']
+    org=data['org']
+    City = data['city']
+    Country=data['country']
+    Region=data['region']
 
     loc = data['loc']
     locs = loc.split(',')
-    lat = float(locs[0])
-    lon = float(locs[1])
+    lat = float( locs[0])
+    lon = float( locs[1])
 
     print '\nYour IP details: '
     print 'IP       : {0} '.format(IP)
-    print 'Region   : {0}; Country : {1}'.format(region, country)
-    print 'City     : {0}'.format(city)
+    print 'Region   : {0}; Country : {1}'.format(Region, Country)
+    print 'City     : {0}'.format(City)
     print 'Org      : {0}'.format(org)
-    print 'Latitude : ', lat, ';  Longitude: ', lon
-    return city, region, country, lat, lon
+    print 'Latitude : ',lat,';  Longitude: ',lon
+    return City, Region, Country, lat, lon
 
 def degree2float(instring, hint):
     """
@@ -211,8 +261,8 @@ class Spectrum(object):
         noteB = ""
         gains = [0., 0., 0., 0., 0.] # gains are in dB
         utc = datetime.datetime.utcnow()
-        telType = "Pyramid Horn"
-        refChan = MAXCHAN/2
+        telType = "Bubble Wrap Horn"
+        refChan = 0
         observer = "Glen Langston"
         xdata = np.zeros(MAXCHAN)
         ydataA = np.zeros(MAXCHAN)
@@ -252,7 +302,7 @@ class Spectrum(object):
         self.etaA = .8 # antenna efficiency (range 0 to 1)
         self.etaB = .99 # efficiency main beam (range 0 to 1)
         self.bunit = 'Counts'       # brightness units
-        self.refChan = refChan
+        self.refChan= refChan
         self.refSample = 0          # identify reference sample in event stream
         self.version = str("2.0.1")
         self.polA = str("X")        # polariation of A ydata: X, Y, R, L,
@@ -297,7 +347,7 @@ class Spectrum(object):
         Compute the ra,dec (J2000) from Az,El location and time
         """
         rads = np.pi / 180.
-        radec2000 = ephem.Equatorial(rads*self.ra, rads*self.dec, epoch=ephem.J2000)
+        radec2000 = ephem.Equatorial( rads*self.ra, rads*self.dec, epoch=ephem.J2000)
         # to convert to dec degrees need to replace on : with d
         self.epoch = "2000"
         gal = ephem.Galactic(radec2000)
@@ -305,6 +355,7 @@ class Spectrum(object):
         self.gallon = angles.sexa2deci(aparts['sign'], *aparts['vals'])
         aparts = angles.phmsdms(str(gal.lat))
         self.gallat = angles.sexa2deci(aparts['sign'], *aparts['vals'])
+
     def datetime(self):
         """
         Return the date and time strings (in "standard format") from spectrum utc
@@ -569,33 +620,27 @@ class Spectrum(object):
             del outline
         outfile.close()
 
-    def foldfrequency(self):
+    def write_ascii_ast(self, dirname):
         """
-        foldfrequency flips and averages the folded xaxis
-        This function was only used while there was a problem with data taking
+        Write ascii file containing astronomy data
+        File name is based on time of observation
         """
-        yfold = self.ydataA[::-1]
-#        print len(yfold)
-        yfold = self.ydataA + yfold
-#        yfold = yfold * 0.5
-        yfold = yfold
-        return yfold
-
-    def chan2freq( self, chan):
-        """
-        Compute channel based on input frequencies (should work with np arrays)
-        chan: channel (or channels to compute frequencies) integers or floats
-        """
-        
-        ndata = len(self.xdata)
-        dx = self.bandwidthHz/float(ndata)
-        chan = np.array( chan)
-        dchan = chan - self.refChan
-        dx = dx * dchan
-        freq = self.centerFreqHz + dx
-        
-        return freq  # output frequency in Hz
-    #end of chan2freq
+        now = self.utc
+        strnow = now.isoformat()
+        datestr = strnow.split('.')
+        daypart = datestr[0]
+        yymmdd = daypart[2:19]
+        # distinguish hot load and regular observations
+        if self.nSpec <= 0:               # if not a spectrum
+            outname = yymmdd + '.eve'     # must be an event
+            self.nTime = 1
+        else:                             # else a spectrum
+            if self.telel > 0:
+                outname = yymmdd + '.ast'
+            else:
+                outname = yymmdd + '.hot'
+        outname = outname.replace(":", "")
+        self.write_ascii_file(dirname, outname)
 
     def read_spec_ast(self, fullname):
         """
@@ -887,7 +932,7 @@ class Spectrum(object):
                         y2.append(0.0)
 
         # at this point all data and header keywords are read
-        self.xdata = np.array(x1)       # transfer x axis; channels or time
+        self.xdata = np.array(x1)            # transfer x axis; channels or time
         if self.nSpec > 0:
             self.ydataA = np.array(y1)       # always transfer 1 spectrum
             if self.nSpec > 1:               # if more than one spectrum
@@ -912,7 +957,38 @@ class Spectrum(object):
                 for iii in range( self.nSamples):
                     self.xdata[iii] = t
                     t += dt
+
+        if self.refChan == 0:
+            self.refChan = self.nChan/2
         return #end of read_spec_ascii
+
+    def foldfrequency(self):
+        """
+        foldfrequency flips and averages the folded xaxis
+        This function was only used while there was a problem with data taking
+        """
+        yfold = self.ydataA[::-1]
+#        print len(yfold)
+        yfold = self.ydataA + yfold
+#        yfold = yfold * 0.5
+        yfold = yfold
+        return yfold
+
+    def chan2freq( self, chan):
+        """
+        Compute channel based on input frequencies (should work with np arrays)
+        chan: channel (or channels to compute frequencies) integers or floats
+        """
+        
+        ndata = len(self.xdata)
+        dx = self.bandwidthHz/float(ndata)
+        chan = np.array( chan)
+        dchan = chan - self.refChan
+        dx = dx * dchan
+        freq = self.centerFreqHz + dx
+        
+        return freq  # output frequency in Hz
+    #end of chan2freq
 
     def chan2vel( self, chan, nureference):
         """
@@ -1052,21 +1128,6 @@ def lines(linelist, lineWidth, x, y):
 #            print 'Line %d: %f,%f' % (kkk, y[kkk], yout[kkk])
  
     return yout
-
-
-"""
-Class defining a Radio Frequency Spectrum
-Includes reading and writing ascii files
-HISTORY
-18DEC11 GIL add channel to freq or velocity functions
-18APR18 GIL add NAVE to save complete obsevering setup
-18MAR10 GIL add labels for different integration types
-18APR01 GIL add labels for different observing types
-18MAR28 GIL merge in iplatlon with gnuradio companion upates
-18MAR05 GIL add device parameter
-18JAN25 GIL add all info included in the notes (.not) file
-16JAN01 GIL initial version
-"""
 
 # HISTORY
 # 18Apr12 GIL move the line interpolation function into radioastronomy
